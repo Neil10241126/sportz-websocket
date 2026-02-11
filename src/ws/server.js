@@ -22,6 +22,8 @@ export function attachWebSocketServer(server) {
     const { pathname } = new URL(req.url, `http://${req.headers.host}`);
 
     if (pathname !== '/ws') {
+      socket.write('HTTP/1.1 404 Not Found\r\n\r\n');
+      socket.destroy();
       return;
     }
 
@@ -63,7 +65,10 @@ export function attachWebSocketServer(server) {
 
   const heartbeat = setInterval(() => {
     for (const client of wss.clients) {
-      if (client.isAlive === false) return client.terminate();
+      if (client.isAlive === false) {
+        client.terminate();
+        continue;
+      }
       client.isAlive = false;
       client.ping();
     }
