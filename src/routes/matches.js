@@ -41,10 +41,6 @@ matchRoutes.post('/', async (req, res) => {
 
   const { startTime, endTime, homeScore, awayScore } = parsed.data;
 
-  if (!parsed.success) {
-    return res.status(400).json({ error: 'Invalid payload', details: parsed.error.issues });
-  }
-
   try {
     const [event] = await db.insert(matches).values({
       ...parsed.data,
